@@ -28,8 +28,7 @@ class PostsView extends StatelessWidget {
               onChanged: (value) {
                 if (value.isEmpty) {
                   // Reset to original list when search field is empty
-                  controller
-                      .fetchPosts(); // Assuming you have a method to reload original posts
+                  controller.fetchPosts(); // Reload original posts
                 } else {
                   // Filter posts based on search query
                   controller.posts.value = controller.originalPosts
@@ -51,7 +50,7 @@ class PostsView extends StatelessWidget {
               ),
             ),
           ),
-          // Posts List Widget
+          // Posts List with Pull to Refresh
           Expanded(
             child: Obx(
               () {
@@ -76,50 +75,57 @@ class PostsView extends StatelessWidget {
                   );
                 }
                 // Show posts list if posts are available
-                return ListView.builder(
-                  padding: const EdgeInsetsDirectional.symmetric(
-                      horizontal: 16, vertical: 8),
-                  itemCount: controller.posts.length,
-                  itemBuilder: (context, index) {
-                    final post = controller.posts[index];
-                    return GestureDetector(
-                      onTap: () {
-                        Get.toNamed('/postDetailsView', arguments: post);
-                      },
-                      child: Card(
-                        margin: const EdgeInsets.symmetric(vertical: 8),
-                        elevation: 3,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadiusDirectional.circular(12),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsetsDirectional.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                post.title,
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    // Fetch posts when pull-to-refresh is triggered
+                    controller.fetchPosts();
+                  },
+                  color: Colors.blueAccent,
+                  child: ListView.builder(
+                    padding: const EdgeInsetsDirectional.symmetric(
+                        horizontal: 16, vertical: 8),
+                    itemCount: controller.posts.length,
+                    itemBuilder: (context, index) {
+                      final post = controller.posts[index];
+                      return GestureDetector(
+                        onTap: () {
+                          Get.toNamed('/postDetailsView', arguments: post);
+                        },
+                        child: Card(
+                          margin: const EdgeInsets.symmetric(vertical: 8),
+                          elevation: 3,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadiusDirectional.circular(12),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsetsDirectional.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  post.title,
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                post.body,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey,
+                                const SizedBox(height: 8),
+                                Text(
+                                  post.body,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 );
               },
             ),
