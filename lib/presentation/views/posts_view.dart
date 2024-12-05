@@ -59,78 +59,72 @@ class PostsView extends StatelessWidget {
               ),
             ),
           ),
-          // Posts List with Pagination
+
+          // Pull to refresh with RefreshIndicator
           Expanded(
             child: Obx(
               () {
-                if (controller.isLoading.value && controller.posts.isEmpty) {
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      color: Colors.blueAccent,
-                    ),
-                  );
-                }
-
-                if (controller.errorMessage.isNotEmpty) {
-                  return Center(
-                    child: Text(
-                      controller.errorMessage.value,
-                      style: const TextStyle(color: Colors.red, fontSize: 16),
-                    ),
-                  );
-                }
-
-                return ListView.builder(
-                  controller: scrollController,
-                  padding: const EdgeInsetsDirectional.symmetric(
-                      horizontal: 16, vertical: 8),
-                  itemCount: controller.posts.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index == controller.posts.length) {
-                      return controller.hasMore.value
-                          ? const SizedBox.shrink()
-                          : const SizedBox.shrink(); // Show loading or nothing
-                    }
-
-                    final post = controller.posts[index];
-                    return GestureDetector(
-                      onTap: () {
-                        Get.toNamed('/postDetailsView', arguments: post);
-                      },
-                      child: Card(
-                        margin: const EdgeInsets.symmetric(vertical: 8),
-                        elevation: 3,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadiusDirectional.circular(12),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsetsDirectional.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                post.title,
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    controller.resetPosts(); // Reset and fetch posts again
+                  },
+                  child: ListView.builder(
+                    controller: scrollController,
+                    padding: const EdgeInsetsDirectional.symmetric(
+                        horizontal: 16, vertical: 8),
+                    itemCount: controller.posts.length + 1,
+                    itemBuilder: (context, index) {
+                      if (index == controller.posts.length) {
+                        return controller.hasMore.value
+                            ? const Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.blueAccent,
                                 ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                post.body,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey,
+                              )
+                            : const SizedBox
+                                .shrink(); // Show loading or nothing
+                      }
+
+                      final post = controller.posts[index];
+                      return GestureDetector(
+                        onTap: () {
+                          Get.toNamed('/postDetailsView', arguments: post);
+                        },
+                        child: Card(
+                          margin: const EdgeInsets.symmetric(vertical: 8),
+                          elevation: 3,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadiusDirectional.circular(12),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsetsDirectional.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  post.title,
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                            ],
+                                const SizedBox(height: 8),
+                                Text(
+                                  post.body,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 );
               },
             ),
