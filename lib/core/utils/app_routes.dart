@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-
 import '../../presentation/views/post_details_view.dart';
 import '../../presentation/views/posts_view.dart';
 
