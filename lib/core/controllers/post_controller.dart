@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+
 import '../models/post_model.dart';
 import '../services/api_service.dart';
 

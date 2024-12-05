@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../../core/models/post_model.dart';
 
 class PostDetailsView extends StatelessWidget {

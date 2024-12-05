@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import 'core/router/app_routes.dart';
 import 'core/services/api_service.dart';
-import 'core/utils/app_routes.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
